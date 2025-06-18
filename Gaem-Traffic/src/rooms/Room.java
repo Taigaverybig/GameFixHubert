@@ -105,6 +105,9 @@ public abstract class Room implements Questionable, Hintable, AnswerSubject {
             // 🔔 Hier roep je alle observers aan:
             notifyObservers(juist);
             if (isAfgerond()) {
+                player.addScore(10);   // ← geeft 10 punten
+                System.out.println("🏆 +10 punten! Totaal: " + player.getScore());
+                afgerond = true;       // deur mag open, kamer voltooid
                 break;          // of 'return;' als je de methode meteen wilt verlaten
             }
 
