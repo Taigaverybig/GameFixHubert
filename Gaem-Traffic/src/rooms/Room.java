@@ -10,39 +10,82 @@ import vraag.VraagStrategie;
 
 import java.util.*;
 
+/**
+ * Abstracte basis‑klasse voor alle kamers.
+ *  ✓ bevat Observer‑mechanisme (Door, StatusDisplay, Monster)
+ *  ✓ ondersteunt /use‑voorwerpen via Map<String,Object>
+ *  ✓ integreert Joker‑functionaliteit (HintJoker & KeyJokerRoom)
+ *  ✓ handhaaft logica van je originele versie (voorwerp‑map, monster‑spawn, hint flow …)
+ */
 public abstract class Room implements Questionable, Hintable, AnswerSubject {
+
+    /* ========== basis‑state ========== */
 
     protected final String naam;
     protected final HintSystem hintSystem;
     protected final VraagStrategie vraagStrategie;
     protected final Player player;
 
-    protected Monster monster;
-    protected boolean monsterGeactiveerd = false;
-    protected boolean afgerond = false;
-    private boolean hintJokerGebruikt = false;
+    /* ========== spel‑state ========== */
 
-    private final Map<String, Object> voorwerpen = new HashMap<>();
+    protected Monster monster;                // kan null zijn
+    protected boolean monsterGeactiveerd = false;
+    protected boolean afgerond           = false;
+    private   boolean hintJokerGebruikt  = false;
+
+    /* ========== voorwerpen & deur ========== */
+
+    private final Map<String,Object> voorwerpen = new HashMap<>();
     private final Door deur = new Door();
+
+    /* ========== observers ========== */
+
     private final List<AnswerObserver> observers = new ArrayList<>();
 
+    /* ========== ctor ========== */
+
     protected Room(HintSystem hintSystem, VraagStrategie strategie, Player player, String naam) {
-        this.hintSystem = hintSystem;
-        this.vraagStrategie = strategie;
-        this.player = player;
-        this.naam = naam;
+        this.hintSystem      = hintSystem;
+        this.vraagStrategie  = strategie;
+        this.player          = player;
+        this.naam            = naam;
     }
 
+    /* ------------------------------------------------------------------------
+       abstracte bouwstenen – elke concrete kamer moet deze invullen
+       --------------------------------------------------------------------- */
+
+    /** print een korte beschrijving (kleur‑icoon, lore, …) */
+    protected abstract void printKamerInfo();
+
+    /** spawn eventueel een monster (kans > 0); laat leeg als je er geen wilt */
+    protected abstract void spawnMonster();
+
+    /** voeg alle /use‑voorwerpen voor deze kamer toe */
+    protected abstract void voegVoorwerpenToe();
+
+    /* ------------------------------------------------------------------------
+       publieke API
+       --------------------------------------------------------------------- */
+
+    /** Wordt vanuit Game aangeroepen zodra de speler de kamer binnenloopt. */
     public void enter() {
         commands.CommandHandler.setCurrentRoom(this);
+
         player.nextRoom();
         printKamerInfo();
         spawnMonster();
         voegVoorwerpenToe();
-        registreerObservers();
-        stelVraag();
+
+        // observers registreren
+        addObserver(deur);
+        addObserver(new StatusDisplay());
+        if (monster != null) addObserver(monster);
+
+        stelVraag();          // start de vraag‑loop
     }
 
+    /** Vraag‑&‑antwoord‑lus – identiek aan die van je vriend, maar bewaart functies uit origineel. */
     public void stelVraag() {
         Scanner scanner = new Scanner(System.in);
         int pogingen = 0;
@@ -58,21 +101,37 @@ public abstract class Room implements Questionable, Hintable, AnswerSubject {
             }
 
             juist = vraagStrategie.controleerAntwoord(antwoord);
+
+            // 🔔 Hier roep je alle observers aan:
             notifyObservers(juist);
+            if (isAfgerond()) {
+                break;          // of 'return;' als je de methode meteen wilt verlaten
+            }
 
-            if (isAfgerond()) break;
-
-            if (!juist && pogingen == 0 && monster != null && !monster.isVerslagen()) {
-                if (!monsterGeactiveerd) {
+            if (!juist && pogingen == 0 && !isAfgerond() && monster != null && !monster.isVerslagen()) {
+                if (monster != null && !monsterGeactiveerd) {
                     monster.valAan(player);
                     monsterGeactiveerd = true;
                 }
-                hintSystem.vraagEnVerwerkHint(scanner);
+
+                System.out.println("Wil je een hint? (ja/nee)");
+                String hintAntwoord;
+                while (true) {
+                    hintAntwoord = scanner.nextLine().trim();
+                    if (!commands.CommandHandler.verwerk(hintAntwoord)) break;
+                }
+                hintSystem.toonHintAlsGewenst(hintAntwoord);
             }
+
             pogingen++;
         }
     }
 
+    /* ------------------------------------------------------------------------
+       Joker‑ondersteuning
+       --------------------------------------------------------------------- */
+
+    /** wordt door HintJoker opgeroepen */
     public void gebruikHintJoker() {
         if (!hintJokerGebruikt) {
             System.out.println("🎁 Joker gebruikt! Je krijgt deze hint:");
@@ -83,46 +142,54 @@ public abstract class Room implements Questionable, Hintable, AnswerSubject {
         }
     }
 
-    public Object getObject(String key) { return voorwerpen.get(key); }
-    public void voegVoorwerpToe(String k, Object v) { voorwerpen.put(k.toLowerCase(), v); }
-    public Monster getMonster() { return monster; }
-    public void setMonster(Monster m) { this.monster = m; }
-    public Door getDeur() { return deur; }
-    public boolean isAfgerond() { return afgerond; }
-    public void markAfgerond() { afgerond = true; }
+    /* ------------------------------------------------------------------------
+       Voorwerp‑API (gebruikt door CommandHandler)
+       --------------------------------------------------------------------- */
 
-    public void registreerObservers() {
-        addObserver(deur);
-        addObserver(new StatusDisplay());
-        if (monster != null) addObserver(monster);
-    }
+    public Object getObject(String key)         { return voorwerpen.get(key); }
+    public void   voegVoorwerpToe(String k, Object v) { voorwerpen.put(k.toLowerCase(), v); }
 
-    public void deregistreerMonster() {
-        if (monster != null) {
-            removeObserver(monster);
-            monster = null;
-        }
-    }
+    /* ------------------------------------------------------------------------
+       Getters voor CommandHandler & Game
+       --------------------------------------------------------------------- */
 
-    @Override public void addObserver(AnswerObserver o) { observers.add(o); }
+    public Monster getMonster()         { return monster; }
+    public void    setMonster(Monster m){ this.monster = m; }
+    public Door    getDeur()            { return deur; }
+
+    public boolean isAfgerond()         { return afgerond; }
+    public void    markAfgerond()       { afgerond = true; }
+
+    /* ------------------------------------------------------------------------
+       Observer‑implementatie
+       --------------------------------------------------------------------- */
+
+    @Override public void addObserver(AnswerObserver o)    { observers.add(o);    }
     @Override public void removeObserver(AnswerObserver o) { observers.remove(o); }
     @Override public void notifyObservers(boolean correct) {
         for (AnswerObserver o : observers) o.update(correct);
+        // deur gaat open? markeer afgerond zodat Game weet dat je door mag
         if (correct) afgerond = true;
     }
 
+    /* ------------------------------------------------------------------------
+       Hintable (default)
+       --------------------------------------------------------------------- */
     @Override public void vraagOmHint() {
         System.out.println("Deze kamer heeft geen extra hint.");
     }
 
+    /* ------------------------------------------------------------------------
+       Kleine util om monsters te spawnen met kans‑percentage
+       --------------------------------------------------------------------- */
     protected void spawnMonsterIfChance(Monster kandidaat, double kans) {
         if (Math.random() < kans) {
             this.monster = kandidaat;
             System.out.println("👹 Een " + kandidaat.getNaam() + " sluipt rond in deze kamer!");
         }
     }
+    public VraagStrategie getVraagStrategie() {
+        return vraagStrategie;
+    }
 
-    protected abstract void printKamerInfo();
-    protected abstract void spawnMonster();
-    protected abstract void voegVoorwerpenToe();
 }
