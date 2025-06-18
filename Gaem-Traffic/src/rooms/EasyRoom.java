@@ -18,7 +18,7 @@ public class EasyRoom extends Room {
 
     @Override
     public void spawnMonster() {
-        spawnMonsterIfChance(new monsters.Creeper(), 0.25);
+        spawnMonsterIfChance(new monsters.Creeper(), 0.8);
     }
 
     @Override

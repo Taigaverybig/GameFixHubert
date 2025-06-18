@@ -49,7 +49,7 @@ public class BossRoom extends Room {
 
     @Override
     public void spawnMonster() {
-        double kans = 0.4;
+        double kans = 0.8;
         if (Math.random() < kans) {
             this.monster = new ChickenJockey();
             System.out.println("⚠️ Je voelt een dreiging... er is iets in deze kamer.");
@@ -62,7 +62,7 @@ public class BossRoom extends Room {
     }
     @Override
     public void voegVoorwerpenToe() {
-        voegVoorwerpToe("boek", new Kamerinfo("Oude inscripties sieren de muur."));
+        voegVoorwerpToe("boek", new Kamerinfo("The END Kamer."));
         voegVoorwerpToe("zwaard", new Zwaard(40));
         voegVoorwerpToe("sleutel", new Sleutel("Bronzen sleutel"));
     }

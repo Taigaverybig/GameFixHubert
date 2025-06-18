@@ -18,7 +18,7 @@ public class NormalRoom extends Room {
 
     @Override
     public void spawnMonster() {
-        spawnMonsterIfChance(new monsters.Zombie(), 0.25);
+        spawnMonsterIfChance(new monsters.Zombie(), 0.8);
     }
 
     @Override

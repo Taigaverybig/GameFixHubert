@@ -20,8 +20,8 @@ public class SaveRoom extends Room {
     @Override
     public void printKamerInfo() {
         System.out.println("💾 Je bent in een Save Room!");
-        System.out.println("Je voelt je opgeladen... +20 HP!");
-        player.increaseHP(20);
+        System.out.println("Je voelt je opgeladen... +10 HP!");
+        player.increaseHP(10);
         System.out.println("Nieuwe HP: " + player.getHP());
     }
 

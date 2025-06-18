@@ -16,7 +16,7 @@ public class Zombie implements Monster {
 
     @Override
     public int getSchade() {
-        return 10;
+        return 30;
     }
 
     @Override

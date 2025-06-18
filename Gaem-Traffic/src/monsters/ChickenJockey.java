@@ -16,7 +16,7 @@ public class ChickenJockey implements Monster {
 
     @Override
     public int getSchade() {
-        return 25;
+        return 50;
     }
 
     @Override

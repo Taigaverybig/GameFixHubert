@@ -16,7 +16,7 @@ public class Creeper implements Monster {
 
     @Override
     public int getSchade() {
-        return 5;
+        return 20;
     }
 
     @Override

@@ -23,7 +23,7 @@ public class Skeleton implements Monster {
     public void valAan(Player speler) {
         if (verslagen) return;              // ← valt nooit meer aan
         speler.decreaseHP(getSchade());
-        System.out.println("💀 De skeleton valt aan!");
+        System.out.println("💀 De skeleton valt aan! Je verliest " + getSchade() + " HP.");
     }
 
     @Override

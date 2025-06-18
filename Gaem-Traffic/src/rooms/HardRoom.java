@@ -20,13 +20,13 @@ public class HardRoom extends Room {
 
     @Override
     public void spawnMonster() {
-        spawnMonsterIfChance(new Skeleton(), 0.4);
+        spawnMonsterIfChance(new Skeleton(), 0.8);
     }
 
     @Override
     public void voegVoorwerpenToe() {
         voegVoorwerpToe("boek", new Kamerinfo("Oude inscripties sieren de muur."));
-        voegVoorwerpToe("zwaard", new Zwaard(40));
+        //voegVoorwerpToe("zwaard", new Zwaard(40));
         voegVoorwerpToe("sleutel", new Sleutel("Bronzen sleutel"));
     }
 }
