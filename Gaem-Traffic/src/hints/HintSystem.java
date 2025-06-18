@@ -2,6 +2,7 @@ package hints;
 
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 public class HintSystem {
     private List<HintProvider> hintProviders;
@@ -13,7 +14,8 @@ public class HintSystem {
 
     public String geefHint() {
         HintProvider gekozenProvider = hintProviders.get(random.nextInt(hintProviders.size()));
-        return gekozenProvider.geefHint();}
+        return gekozenProvider.geefHint();
+    }
 
     public void toonHintAlsGewenst(String antwoord) {
         if (antwoord.trim().equalsIgnoreCase("ja")) {
@@ -24,6 +26,15 @@ public class HintSystem {
         }
     }
 
+    // 🆕 Shotgun Surgery fix
+    public void vraagEnVerwerkHint(Scanner scanner) {
+        System.out.println("Wil je een hint? (ja/nee)");
+        while (true) {
+            String antwoord = scanner.nextLine().trim();
+            if (!commands.CommandHandler.verwerk(antwoord)) {
+                toonHintAlsGewenst(antwoord);
+                break;
+            }
+        }
+    }
 }
-
-
