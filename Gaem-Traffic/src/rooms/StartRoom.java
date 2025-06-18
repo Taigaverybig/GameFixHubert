@@ -35,4 +35,5 @@ public class StartRoom extends Room {
         voegVoorwerpToe("zwaard", new Zwaard(40));
         voegVoorwerpToe("sleutel", new Sleutel("Bronzen sleutel"));
     }
+
 }
