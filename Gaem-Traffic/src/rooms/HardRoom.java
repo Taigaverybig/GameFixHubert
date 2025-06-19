@@ -26,7 +26,7 @@ public class HardRoom extends Room {
     @Override
     public void voegVoorwerpenToe() {
         voegVoorwerpToe("boek", new Kamerinfo("Oude inscripties sieren de muur."));
-        //voegVoorwerpToe("zwaard", new Zwaard(40));
+        voegVoorwerpToe("zwaard", new Zwaard(40));
         voegVoorwerpToe("sleutel", new Sleutel("Bronzen sleutel"));
     }
 }

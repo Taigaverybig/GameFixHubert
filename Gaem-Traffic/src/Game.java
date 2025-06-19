@@ -38,7 +38,7 @@ public class Game {
 
         Room normal1 = new NormalRoom(hintSystem,
                 new MeerkeuzeVraag("Wat is een Sprint?",
-                        List.of(" Een vergaderweek waarin alleen wordt gepland en geëvalueerd.", "Een race om zoveel mogelijk werk te doen zonder pauzes.", "Een moment waarop het team feedback verzamelt van de klant.", "Een vast tijdsblok waarin een Scrum-team werkt aan het opleveren van een werkend product."),
+                        List.of("Een vergaderweek waarin alleen wordt gepland en geëvalueerd.", "Een race om zoveel mogelijk werk te doen zonder pauzes.", "Een moment waarop het team feedback verzamelt van de klant.", "Een vast tijdsblok waarin een Scrum-team werkt aan het opleveren van een werkend product."),
                         "Een vast tijdsblok waarin een Scrum-team werkt aan het opleveren van een werkend product."), speler);
         Room normal2 = new NormalRoom(hintSystem,
                 new MeerkeuzeVraag("Waar staat DoR voor?",
