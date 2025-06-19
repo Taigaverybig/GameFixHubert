@@ -98,32 +98,32 @@ public abstract class Room implements Questionable, Hintable, AnswerSubject {
             while (true) {
                 antwoord = scanner.nextLine().trim();
                 if (!commands.CommandHandler.verwerk(antwoord)) break;
+
+                // Belangrijk: als de kamer door het commando is afgerond, direct stoppen
+                if (isAfgerond()) {
+                    player.addScore(10);
+                    System.out.println("🏆 +10 punten! Totaal: " + player.getScore());
+                    return;
+                }
             }
 
             juist = vraagStrategie.controleerAntwoord(antwoord);
-
-            // 🔔 Hier roep je alle observers aan:
             notifyObservers(juist);
+
             if (isAfgerond()) {
-                player.addScore(10);   // ← geeft 10 punten
+                player.addScore(10);
                 System.out.println("🏆 +10 punten! Totaal: " + player.getScore());
-                afgerond = true;       // deur mag open, kamer voltooid
-                break;          // of 'return;' als je de methode meteen wilt verlaten
+                break;
             }
 
-            if (!juist && pogingen == 0 && !isAfgerond() && monster != null && !monster.isVerslagen()) {
-                if (monster != null && !monsterGeactiveerd) {
+            if (!juist && pogingen == 0 && monster != null && !monster.isVerslagen()) {
+                if (!monsterGeactiveerd) {
                     monster.valAan(player);
                     monsterGeactiveerd = true;
                 }
 
-                System.out.println("Wil je een hint? (ja/nee)");
-                String hintAntwoord;
-                while (true) {
-                    hintAntwoord = scanner.nextLine().trim();
-                    if (!commands.CommandHandler.verwerk(hintAntwoord)) break;
-                }
-                hintSystem.toonHintAlsGewenst(hintAntwoord);
+                // Hints netjes via HintSystem-vraagmethode
+                hintSystem.vraagEnVerwerkHint(scanner);
             }
 
             pogingen++;
