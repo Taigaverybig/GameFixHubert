@@ -10,8 +10,8 @@ import player.Player;
 import vraag.VraagStrategie;
 
 import java.util.Scanner;
-
-public class EasyRoom extends Room {
+import Joker.*;
+public class EasyRoom extends Room implements KeyJokerRoom {
     public EasyRoom(HintSystem hintSystem, VraagStrategie strategie, Player player) {
         super(hintSystem, strategie, player, "Easy Room");
     }
@@ -30,6 +30,16 @@ public class EasyRoom extends Room {
         voegVoorwerpToe("boek", new Kamerinfo("Oude inscripties sieren de muur."));
         voegVoorwerpToe("zwaard", new Zwaard(40));
         voegVoorwerpToe("sleutel", new Sleutel("Bronzen sleutel"));
+    }
+    @Override
+    public void geefSleutel() {
+        if (!isAfgerond()) {
+            getDeur().setOpen(true);
+            markAfgerond();
+            System.out.println("🔑 KeyJoker gebruikt: De deur is automatisch geopend!");
+        } else {
+            System.out.println("Deze kamer was al afgerond.");
+        }
     }
 }
 

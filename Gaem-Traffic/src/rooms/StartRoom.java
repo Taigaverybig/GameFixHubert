@@ -55,7 +55,8 @@ public class StartRoom extends Room {
         System.out.println("- Bij een fout antwoord kan een monster je aanvallen!");
         System.out.println("- Gebruik /help voor een lijst met commands.");
         System.out.println("- Als je HP op 0 komt, ben je DOOD.");
-        System.out.println("...");
+        System.out.println("- Je hebt meerdere items die je kan gebruiken. (Zwaard, Sleutel, Kamerinfo, Schatkist)");
+        System.out.println("- Je hebt een KeyJoker die alleen werkt in makkelijke kamers.");
         System.out.println("Veel succes, avonturier! 🧭\n");
     }
 

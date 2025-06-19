@@ -9,6 +9,8 @@ public class Player {
     private int totaalKamers = 0;
     private int score = 0;
 
+    public boolean isAlive() { return hp > 0; }
+
     private JokerContext jokerContext = new JokerContext(new HintJoker());
 
     public Player(int playerId) {
