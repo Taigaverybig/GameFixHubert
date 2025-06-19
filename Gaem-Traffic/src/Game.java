@@ -83,6 +83,12 @@ public class Game {
 
         // Hoofdloop
         while (bezocht.size() < kamerLijst.size() + 1) {
+
+            if (!speler.isAlive()) {
+                System.out.println("\n💀 GAME OVER – je bent verslagen.");
+                return;                     // stopt main(), programma eindigt netjes
+            }
+
             System.out.println("\n🧭 Kies een kamer om te betreden:");
             int index = 1;
             Map<Integer, Room> keuzeMap = new HashMap<>();

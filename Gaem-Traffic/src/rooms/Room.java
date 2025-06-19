@@ -116,11 +116,15 @@ public abstract class Room implements Questionable, Hintable, AnswerSubject {
                 break;
             }
 
-            if (!juist && pogingen == 0 && monster != null && !monster.isVerslagen()) {
-                if (!monsterGeactiveerd) {
-                    monster.valAan(player);
-                    monsterGeactiveerd = true;
+            if (!juist && monster != null && !monster.isVerslagen()) {
+
+                monster.valAan(player);
+
+
+                if (!player.isAlive()) {
+                    return;   // verlaat stelVraag(); hoofdloop vangt game‑over op
                 }
+
 
                 // Hints netjes via HintSystem-vraagmethode
                 hintSystem.vraagEnVerwerkHint(scanner);

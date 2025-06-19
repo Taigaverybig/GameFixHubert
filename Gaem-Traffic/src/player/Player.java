@@ -35,6 +35,9 @@ public class Player {
 
     public void decreaseHP(int amount) {
         this.hp = Math.max(0, this.hp - amount);
+        if (hp == 0) {
+            System.out.println("💀 Je HP is 0. Je bent gestorven!");
+        }
     }
 
     public int getHP() {
